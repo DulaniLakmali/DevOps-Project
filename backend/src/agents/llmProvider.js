@@ -106,20 +106,12 @@ export class LLMProvider {
           { step: 3, action: "K8S_APPLY", command: "kubectl apply -f k8s/frontend-deployment.yaml", description: "Deploy deployment & service to Kubernetes namespace" },
           { step: 4, action: "ROLLOUT_STATUS", command: "kubectl rollout status deployment/frontend-app", description: "Verify zero-downtime rolling update completion" }
         ];
-      } else if (p.includes("run ci") || p.includes("trigger pipeline") || p.includes("ci pipeline")) {
-        summary = "Trigger GitHub Actions Continuous Integration pipeline: Lint, Unit Tests, and Security Audit.";
-        tasks = [
-          { step: 1, action: "GIT_CHECKOUT", command: "git status && git log -n 1 --oneline", description: "Verify Git workspace branch head" },
-          { step: 2, action: "LINT_CHECK", command: "npm run lint", description: "Execute static analysis & code style verification" },
-          { step: 3, action: "UNIT_TEST", command: "npm test", description: "Execute automated unit test suite" },
-          { step: 4, action: "SECURITY_SCAN", command: "npm audit --audit-level=high", description: "Scan dependencies for known CVE vulnerabilities" }
-        ];
-      } else if (p.includes("github") || p.includes("dispatch") || p.includes("workflow")) {
-        summary = "Trigger GitHub Actions workflow dispatch on target repository and poll status.";
+      } else if (p.includes("run ci") || p.includes("trigger pipeline") || p.includes("ci pipeline") || p.includes("github") || p.includes("dispatch") || p.includes("workflow")) {
+        summary = "Dispatch GitHub Actions Continuous Integration pipeline to cloud runner with real-time polling.";
         tasks = [
           { step: 1, action: "GITHUB_VERIFY_REPO", command: "git remote -v && git branch --show-current", description: "Verify connected repository and target ref branch" },
-          { step: 2, action: "GITHUB_ACTIONS_DISPATCH", command: "gh workflow run deploy.yml --ref main", description: "Trigger GitHub Actions workflow dispatch via REST API" },
-          { step: 3, action: "POLL_RUN_STATUS", command: "gh run list --workflow=deploy.yml --limit 1", description: "Monitor runner execution logs and job status" }
+          { step: 2, action: "GITHUB_ACTIONS_DISPATCH", command: "gh workflow run ci.yml --ref main", description: "Dispatch GitHub Actions workflow via REST API and start telemetry poller" },
+          { step: 3, action: "POLL_RUN_STATUS", command: "gh run list --workflow=ci.yml --limit 1", description: "Monitor runner execution logs and job status" }
         ];
       } else if (p.includes("scale")) {
         const targetReplicas = (p.match(/to (\d+)/) || [])[1] || "4";
