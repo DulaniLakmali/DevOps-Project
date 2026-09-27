@@ -8,6 +8,7 @@ import { RAGAgent } from "../src/agents/ragAgent.js";
 import { dbGet, dbAll, dbRun } from "../src/database/db.js";
 import { seedDatabase } from "../src/database/seed.js";
 
+//test commit
 async function runAllTests() {
   console.log("\n=======================================================");
   console.log("🧪 RUNNING CHAPTER 6 EVALUATION SUITE (TC001 - TC009)");
